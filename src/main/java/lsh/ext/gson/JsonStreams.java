@@ -26,6 +26,7 @@ public final class JsonStreams {
 	 * @param reader JSON reader. The reader must have {@link JsonReader#setLenient(boolean)} set to {@code} in order to read not normalized JSON streams.
 	 * @param writer JSON writer
 	 *
+	 * @throws IOException A rethrown exception
 	 * @see #copyTo(JsonReader, JsonWriter, boolean)
 	 * @since 0-SNAPSHOT
 	 */
@@ -41,6 +42,7 @@ public final class JsonStreams {
 	 * @param writer               JSON writer
 	 * @param ignoreTrailingTokens Ignore incoming JSON stream trailing tokens
 	 *
+	 * @throws IOException A rethrown exception
 	 * @see #copyTo(JsonReader, JsonWriter)
 	 * @since 0-SNAPSHOT
 	 */
@@ -50,6 +52,7 @@ public final class JsonStreams {
 		final long[] longBuffer = new long[1];
 		final double[] doubleBuffer = new double[1];
 		int level = 0;
+		loop:
 		for ( JsonToken token = reader.peek(); token != null; token = reader.peek() ) {
 			switch ( token ) {
 			case BEGIN_ARRAY:
@@ -105,8 +108,7 @@ public final class JsonStreams {
 				writer.nullValue();
 				break;
 			case END_DOCUMENT:
-				// do nothing
-				break;
+				break loop;
 			default:
 				throw new AssertionError(token);
 			}
